@@ -5,7 +5,7 @@ import {
 } from '../domain/milk-production/milk-production.entity';
 
 type MilkDailyProduction = {
-  date: Date;
+  date: string;
   amount: number;
 };
 
@@ -56,9 +56,9 @@ export class MilkProductionUseCases {
     return (await this.milkProductionRepository.deleteById(id)).toJSON();
   }
 
-  async mensalReport(farmId: string, year: number, month: number) {
-    const startDate = new Date(year, month - 1, 1);
-    const endDate = new Date(year, month, 0);
+  async monthlyReport(farmId: string, year: number, month: number) {
+    const startDate = new Date(Date.UTC(year, month - 1, 1));
+    const endDate = new Date(Date.UTC(year, month, 0));
 
     const monthRecords =
       await this.milkProductionRepository.findByFarmIdAndPeriod(
@@ -76,12 +76,12 @@ export class MilkProductionUseCases {
     const dailyProduction: MilkDailyProduction[] = new Array(endDate.getDate())
       .fill(0)
       .map((_, i) => {
-        const date = new Date(year, month - 1, i + 1);
+        const date = new Date(Date.UTC(year, month - 1, i + 1));
         const amount = monthRecords.find((record) => record.date <= date)
           ?.amount;
 
         return {
-          date,
+          date: date.toISOString(),
           amount: amount ?? initialPeriodProduction,
         };
       });

@@ -129,4 +129,64 @@ describe('MilkProductionUseCases', () => {
     ).rejects.toThrow('Cannot insert milk production for the same day twice');
     expect(milkProductionRepository.items).toHaveLength(1);
   });
+
+  it('should return correct milk production report', async () => {
+    const milkProductionRepository = new MilkProductionInMemoryRepository();
+    const milkProductionUseCases = new MilkProductionUseCases(
+      milkProductionRepository,
+    );
+
+    await milkProductionUseCases.create({
+      farmId: '1',
+      date: new Date('2023-08-10'),
+      amount: 5,
+    });
+
+    await milkProductionUseCases.create({
+      farmId: '1',
+      date: new Date('2023-08-20'),
+      amount: 10,
+    });
+
+    await milkProductionUseCases.create({
+      farmId: '1',
+      date: new Date('2023-08-30'),
+      amount: 15,
+    });
+
+    const { dailyProduction, averageProduction } =
+      await milkProductionUseCases.monthlyReport('1', 2023, 8);
+
+    expect(averageProduction).toBe(
+      (
+        dailyProduction.reduce((a, b) => a + b.amount, 0) /
+        dailyProduction.length
+      ).toFixed(3),
+    );
+
+    expect(dailyProduction[8]).toStrictEqual({
+      amount: 0,
+      date: new Date('2023-08-09').toISOString(),
+    });
+    expect(dailyProduction[9]).toStrictEqual({
+      amount: 5,
+      date: new Date('2023-08-10').toISOString(),
+    });
+    expect(dailyProduction[18]).toStrictEqual({
+      amount: 5,
+      date: new Date('2023-08-19').toISOString(),
+    });
+    expect(dailyProduction[19]).toStrictEqual({
+      amount: 10,
+      date: new Date('2023-08-20').toISOString(),
+    });
+    expect(dailyProduction[28]).toStrictEqual({
+      amount: 10,
+      date: new Date('2023-08-29').toISOString(),
+    });
+    expect(dailyProduction[29]).toStrictEqual({
+      amount: 15,
+      date: new Date('2023-08-30').toISOString(),
+    });
+  });
 });
