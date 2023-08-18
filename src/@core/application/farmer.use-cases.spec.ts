@@ -1,5 +1,5 @@
 import { Farmer } from '../domain/farmer/farmer.entity';
-import { BaseInMemoryRepository } from '../../infra/db/in-memory/base.repository';
+import { BaseInMemoryRepository } from '../infra/db/in-memory/base.repository';
 import { FarmerUseCases } from './farmer.use-cases';
 
 describe('FarmerUseCases', () => {
