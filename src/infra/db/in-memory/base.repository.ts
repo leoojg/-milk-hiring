@@ -3,7 +3,7 @@ import { BaseRepositoryInterface } from 'src/@common/base.repository';
 export class BaseInMemoryRepository<T> implements BaseRepositoryInterface<T> {
   items: T[] = [];
 
-  async get(id: string): Promise<T> {
+  async findById(id: string): Promise<T> {
     return this.items.find((item) => item['id'] === id);
   }
 
@@ -18,14 +18,14 @@ export class BaseInMemoryRepository<T> implements BaseRepositoryInterface<T> {
 
   async updateById(id: string, entity: T): Promise<T> {
     const index = this.items.findIndex((item) => item['id'] === id);
-    if (!index) throw new Error('Entity not found');
+    if (index === -1) throw new Error('Entity not found');
     this.items[index] = entity;
     return entity;
   }
 
   async deleteById(id: string): Promise<T> {
     const index = this.items.findIndex((item) => item['id'] === id);
-    if (!index) throw new Error('Entity not found');
+    if (index === -1) throw new Error('Entity not found');
     const deletedItem = this.items[index];
     this.items.splice(index, 1);
     return deletedItem;
