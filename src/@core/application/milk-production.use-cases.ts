@@ -4,6 +4,11 @@ import {
   MilkProductionProps,
 } from '../domain/milk-production/milk-production.entity';
 
+type MilkDailyProduction = {
+  date: Date;
+  amount: number;
+};
+
 export class MilkProductionUseCases {
   constructor(
     private readonly milkProductionRepository: MilkProductionRepositoryInterface,
@@ -49,5 +54,44 @@ export class MilkProductionUseCases {
 
   async delete(id: string) {
     return (await this.milkProductionRepository.deleteById(id)).toJSON();
+  }
+
+  async mensalReport(farmId: string, year: number, month: number) {
+    const startDate = new Date(year, month - 1, 1);
+    const endDate = new Date(year, month, 0);
+
+    const monthRecords =
+      await this.milkProductionRepository.findByFarmIdAndPeriod(
+        farmId,
+        startDate,
+        endDate,
+      );
+
+    const initialPeriodProduction =
+      (await this.milkProductionRepository.findProductionAmountByFarmIdAndDate(
+        farmId,
+        startDate,
+      )) ?? 0;
+
+    const dailyProduction: MilkDailyProduction[] = new Array(endDate.getDate())
+      .fill(0)
+      .map((_, i) => {
+        const date = new Date(year, month - 1, i + 1);
+        const amount = monthRecords.find((record) => record.date <= date)
+          ?.amount;
+
+        return {
+          date,
+          amount: amount ?? initialPeriodProduction,
+        };
+      });
+
+    const averageProduction =
+      dailyProduction.reduce((acc, curr) => {
+        return acc + curr.amount;
+      }, 0) / dailyProduction.length;
+
+    return { dailyProduction, averageProduction: averageProduction.toFixed(3) };
+    // TODO: create test cases for this method
   }
 }
