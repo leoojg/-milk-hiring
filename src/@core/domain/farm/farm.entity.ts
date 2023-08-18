@@ -1,4 +1,4 @@
-import { ObjectId } from 'mongodb';
+import { generateObjectId } from '../../../@common/util';
 
 export type FarmProps = {
   name: string;
@@ -10,7 +10,7 @@ export class Farm {
   private props: FarmProps;
 
   constructor(props: FarmProps, id?: string) {
-    this.id = id || new ObjectId().toString();
+    this.id = id || generateObjectId();
     this.props = props;
   }
 
@@ -20,10 +20,6 @@ export class Farm {
 
   public get name(): string {
     return this.props.name;
-  }
-
-  private set name(name: string) {
-    this.props.name = name;
   }
 
   toJSON() {

@@ -10,7 +10,7 @@ export class FarmerUseCases {
     return farmer.toJSON();
   }
 
-  async updateById(id: string, farmerProps: FarmerProps) {
+  async updateById(id: string, farmerProps: Partial<FarmerProps>) {
     const farmer = await this.findById(id);
     const output = await this.farmerRepository.updateById(
       id,
