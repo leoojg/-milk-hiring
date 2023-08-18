@@ -10,9 +10,12 @@ export class FarmerUseCases {
     return farmer.toJSON();
   }
 
-  async update(id: string, farmerProps: FarmerProps) {
-    const farmer = new Farmer(farmerProps, id);
-    const output = await this.farmerRepository.updateById(id, farmer);
+  async updateById(id: string, farmerProps: FarmerProps) {
+    const farmer = await this.findById(id);
+    const output = await this.farmerRepository.updateById(
+      id,
+      new Farmer({ ...farmer, ...farmerProps }),
+    );
 
     return output.toJSON();
   }

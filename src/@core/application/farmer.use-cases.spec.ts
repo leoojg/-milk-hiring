@@ -16,7 +16,7 @@ describe('FarmerUseCases', () => {
     const farmerRepository = new BaseInMemoryRepository<Farmer>();
     const farmerUseCases = new FarmerUseCases(farmerRepository);
     const createdFarmer = await farmerUseCases.create({ name: 'John Doe' });
-    const updatedFarmer = await farmerUseCases.update(createdFarmer.id, {
+    const updatedFarmer = await farmerUseCases.updateById(createdFarmer.id, {
       name: 'John Doe 2',
     });
 

@@ -1,16 +1,21 @@
 import { ObjectId } from 'mongodb';
 
-export type FarmerProps = {
+export type FarmProps = {
   name: string;
+  farmerId: string;
 };
 
-export class Farmer {
+export class Farm {
   public readonly id: string;
-  private props: FarmerProps;
+  private props: FarmProps;
 
-  constructor(props: FarmerProps, id?: string) {
+  constructor(props: FarmProps, id?: string) {
     this.id = id || new ObjectId().toString();
     this.props = props;
+  }
+
+  public get farmerId(): string {
+    return this.props.farmerId;
   }
 
   public get name(): string {
