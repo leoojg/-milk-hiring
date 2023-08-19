@@ -4,7 +4,9 @@ export class BaseInMemoryRepository<T> implements BaseRepositoryInterface<T> {
   items: T[] = [];
 
   async findById(id: string): Promise<T> {
-    return this.items.find((item) => item['id'] === id);
+    const item = this.items.find((item) => item['id'] === id);
+    if (!item) throw new Error('Entity not found');
+    return item;
   }
 
   async list(): Promise<T[]> {

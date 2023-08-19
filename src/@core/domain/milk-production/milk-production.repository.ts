@@ -16,5 +16,5 @@ export interface MilkProductionRepositoryInterface
   findProductionAmountByFarmIdAndDate(
     farmId: string,
     date: Date,
-  ): Promise<number | null>;
+  ): Promise<number>;
 }
