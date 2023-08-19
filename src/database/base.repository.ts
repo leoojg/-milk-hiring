@@ -4,7 +4,7 @@ import { Model } from 'mongoose';
 import { BaseRepositoryInterface } from 'src/@common/base.repository';
 
 export class BaseMongooseRepository<T> implements BaseRepositoryInterface<T> {
-  constructor(@InjectModel('model') private model: Model<T>) {}
+  constructor(@InjectModel('BASE_REPOSITORY') private model: Model<T>) {}
 
   async findById(id: string): Promise<T> {
     const entity = await this.model.findById(id).lean();

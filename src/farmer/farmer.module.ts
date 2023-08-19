@@ -13,6 +13,7 @@ import { MilkProductionRepositoryInterface } from 'src/@core/domain/milk-product
 import { MilkProductionInMemoryRepository } from 'src/@core/infra/db/in-memory/milk-production.repository';
 import { MilkProductionService } from './farm/milk-production/milk-production.service';
 import { MilkProductionController } from './farm/milk-production/milk-production.controller';
+import { FarmInMemoryRepository } from 'src/@core/infra/db/in-memory/farm.repository';
 
 @Module({
   controllers: [FarmerController, FarmController, MilkProductionController],
@@ -24,7 +25,14 @@ import { MilkProductionController } from './farm/milk-production/milk-production
       provide: BaseInMemoryRepository,
       useClass: BaseInMemoryRepository,
     },
-
+    {
+      provide: MilkProductionInMemoryRepository,
+      useClass: MilkProductionInMemoryRepository,
+    },
+    {
+      provide: FarmInMemoryRepository,
+      useClass: FarmInMemoryRepository,
+    },
     {
       provide: FarmerUseCases,
       useFactory: (farmerRepository: FarmerRepositoryInterface) =>
@@ -32,18 +40,10 @@ import { MilkProductionController } from './farm/milk-production/milk-production
       inject: [BaseInMemoryRepository],
     },
     {
-      provide: BaseInMemoryRepository,
-      useClass: BaseInMemoryRepository,
-    },
-    {
       provide: FarmUseCases,
       useFactory: (farmRepository: FarmRepositoryInterface) =>
         new FarmUseCases(farmRepository),
-      inject: [BaseInMemoryRepository],
-    },
-    {
-      provide: MilkProductionInMemoryRepository,
-      useClass: MilkProductionInMemoryRepository,
+      inject: [FarmInMemoryRepository],
     },
     {
       provide: MilkProductionUseCases,
