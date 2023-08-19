@@ -193,4 +193,42 @@ describe('ListPricingUseCases', () => {
             PriceEvaluation.firstSemester.costPerKilometerAbove),
     );
   });
+
+  it('should compute production of all the year', async () => {
+    await farmRepository.create(
+      new Farm(
+        {
+          name: 'John Doe',
+          distanceToFactory: 5,
+          farmerId: 'fake-farmer-id',
+        },
+        'fake-farm-id',
+      ),
+    );
+
+    await Promise.all([
+      milkProductionUseCases.create({
+        amount: 5,
+        farmId: 'fake-farm-id',
+        date: new Date('2022-12-30'),
+      }),
+      milkProductionUseCases.create({
+        amount: 10,
+        farmId: 'fake-farm-id',
+        date: new Date('2023-06-30'),
+      }),
+      milkProductionUseCases.create({
+        amount: 0,
+        farmId: 'fake-farm-id',
+        date: new Date('2023-08-30'),
+      }),
+    ]);
+
+    const evaluation = await priceEvaluationUseCases.yearlyReport(
+      'fake-farm-id',
+      2023,
+    );
+
+    expect(evaluation).toHaveLength(12);
+  });
 });

@@ -42,4 +42,14 @@ export class PriceEvaluationUseCases {
 
     return { farmId, totalAmount, year, month };
   }
+
+  async yearlyReport(farmId: string, year: number) {
+    const monthlyPricePromises = Array.from({ length: 12 }).map((_, index) =>
+      this.monthlyPrice(farmId, year, index + 1),
+    );
+
+    const monthlyPrices = await Promise.all(monthlyPricePromises);
+
+    return monthlyPrices;
+  }
 }
