@@ -5,3 +5,7 @@ export interface BaseRepositoryInterface<T> {
   updateById(id: string, entity: T): Promise<T>;
   deleteById(id: string): Promise<T>;
 }
+
+export abstract class TEntity {
+  abstract toJSON(): Record<string, unknown>;
+}

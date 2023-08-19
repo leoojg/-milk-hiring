@@ -3,13 +3,14 @@ import { BaseMongooseRepository } from './base.repository';
 import { MilkProductionRepositoryInterface } from 'src/@core/domain/milk-production/milk-production.repository';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { MilkProductionEntity } from 'src/schemas/milk-production.entity';
 
 export class MilkProductionMongooseRepository
   extends BaseMongooseRepository<MilkProduction>
   implements MilkProductionRepositoryInterface
 {
   constructor(
-    @InjectModel(MilkProduction.name)
+    @InjectModel(MilkProductionEntity.name)
     private milkProductionModel: Model<MilkProduction>,
   ) {
     super(milkProductionModel);

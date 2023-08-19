@@ -1,10 +1,11 @@
 import { NotFoundException } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { BaseRepositoryInterface } from 'src/@common/base.repository';
+import { BaseRepositoryInterface, TEntity } from 'src/@common/base.repository';
 
-export class BaseMongooseRepository<T> implements BaseRepositoryInterface<T> {
-  constructor(@InjectModel('BASE_REPOSITORY') private model: Model<T>) {}
+export class BaseMongooseRepository<T extends TEntity>
+  implements BaseRepositoryInterface<T>
+{
+  constructor(private model: Model<T>) {}
 
   async findById(id: string): Promise<T> {
     const entity = await this.model.findById(id).lean();
