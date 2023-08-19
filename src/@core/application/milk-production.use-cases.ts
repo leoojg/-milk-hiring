@@ -4,7 +4,7 @@ import {
   MilkProductionProps,
 } from '../domain/milk-production/milk-production.entity';
 
-type MilkDailyProduction = {
+type MilkmonthlyProduction = {
   date: string;
   amount: number;
 };
@@ -42,8 +42,9 @@ export class MilkProductionUseCases {
     return output.toJSON();
   }
 
-  async list() {
-    const MilkProductions = await this.milkProductionRepository.list();
+  async list(farmId: string) {
+    const MilkProductions =
+      await this.milkProductionRepository.listByFarmId(farmId);
     return MilkProductions.map((MilkProduction) => MilkProduction.toJSON());
   }
 
@@ -56,7 +57,7 @@ export class MilkProductionUseCases {
     return (await this.milkProductionRepository.deleteById(id)).toJSON();
   }
 
-  async monthlyReport(farmId: string, year: number, month: number) {
+  async monthlyProduction(farmId: string, year: number, month: number) {
     const startDate = new Date(Date.UTC(year, month - 1, 1));
     const endDate = new Date(Date.UTC(year, month, 0));
 
@@ -73,7 +74,9 @@ export class MilkProductionUseCases {
         startDate,
       )) ?? 0;
 
-    const dailyProduction: MilkDailyProduction[] = new Array(endDate.getDate())
+    const monthlyProduction: MilkmonthlyProduction[] = new Array(
+      new Date(year, month, 0).getDate(),
+    )
       .fill(0)
       .map((_, i) => {
         const date = new Date(Date.UTC(year, month - 1, i + 1));
@@ -85,13 +88,20 @@ export class MilkProductionUseCases {
           amount: amount ?? initialPeriodProduction,
         };
       });
+    return monthlyProduction;
+  }
+
+  async monthlyReport(farmId: string, year: number, month: number) {
+    const monthlyProduction = await this.monthlyProduction(farmId, year, month);
 
     const averageProduction =
-      dailyProduction.reduce((acc, curr) => {
+      monthlyProduction.reduce((acc, curr) => {
         return acc + curr.amount;
-      }, 0) / dailyProduction.length;
+      }, 0) / monthlyProduction.length;
 
-    return { dailyProduction, averageProduction: averageProduction.toFixed(3) };
-    // TODO: create test cases for this method
+    return {
+      monthlyProduction,
+      averageProduction: averageProduction.toFixed(3),
+    };
   }
 }

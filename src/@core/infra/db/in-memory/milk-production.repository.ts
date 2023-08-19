@@ -6,6 +6,10 @@ export class MilkProductionInMemoryRepository
   extends BaseInMemoryRepository<MilkProduction>
   implements MilkProductionRepositoryInterface
 {
+  async listByFarmId(farmId: string): Promise<MilkProduction[]> {
+    return this.items.filter((item) => item.farmId === farmId);
+  }
+
   async findByFarmIdAndDate(
     farmId: string,
     date: Date,

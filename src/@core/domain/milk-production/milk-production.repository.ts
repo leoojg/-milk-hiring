@@ -3,6 +3,7 @@ import { MilkProduction } from './milk-production.entity';
 
 export interface MilkProductionRepositoryInterface
   extends BaseRepositoryInterface<MilkProduction> {
+  listByFarmId(farmId: string): Promise<MilkProduction[]>;
   findByFarmIdAndDate(
     farmId: string,
     date: Date,

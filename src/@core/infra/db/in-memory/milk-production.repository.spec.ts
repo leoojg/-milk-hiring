@@ -2,6 +2,29 @@ import { MilkProduction } from '../../../domain/milk-production/milk-production.
 import { MilkProductionInMemoryRepository } from './milk-production.repository';
 
 describe('MilkProductionInMemoryRepository', () => {
+  it('should list all milk productions from a farm', async () => {
+    const repository = new MilkProductionInMemoryRepository();
+    const milkProduction = new MilkProduction({
+      farmId: '1',
+      date: new Date('2023-08-18'),
+      amount: 10,
+    });
+
+    await repository.create(milkProduction);
+    await repository.create(
+      new MilkProduction({
+        farmId: '2',
+        date: new Date('2023-08-18'),
+        amount: 10,
+      }),
+    );
+
+    const foundMilkProductions = await repository.listByFarmId('1');
+
+    expect(foundMilkProductions).toStrictEqual([milkProduction]);
+    expect(repository.items).toHaveLength(2);
+  });
+
   it('should find a milk production by farm id and date', async () => {
     const repository = new MilkProductionInMemoryRepository();
     const farmId = '1';

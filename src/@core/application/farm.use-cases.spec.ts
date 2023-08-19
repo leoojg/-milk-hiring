@@ -9,6 +9,7 @@ describe('FarmUseCases', () => {
     const output = await farmUseCases.create({
       name: 'John Doe',
       farmerId: '1',
+      distanceToFactory: 10,
     });
 
     expect(output.name).toEqual('John Doe');
@@ -21,6 +22,7 @@ describe('FarmUseCases', () => {
     const createdFarm = await farmUseCases.create({
       name: 'John Doe',
       farmerId: '1',
+      distanceToFactory: 10,
     });
     const updatedFarm = await farmUseCases.updateById(createdFarm.id, {
       name: 'John Doe 2',
@@ -34,8 +36,16 @@ describe('FarmUseCases', () => {
     const farmRepository = new BaseInMemoryRepository<Farm>();
     const farmUseCases = new FarmUseCases(farmRepository);
     const [farm1, farm2] = await Promise.all([
-      farmUseCases.create({ name: 'John Doe', farmerId: '1' }),
-      farmUseCases.create({ name: 'John Doe 2', farmerId: '1' }),
+      farmUseCases.create({
+        name: 'John Doe',
+        farmerId: '1',
+        distanceToFactory: 10,
+      }),
+      farmUseCases.create({
+        name: 'John Doe 2',
+        farmerId: '1',
+        distanceToFactory: 10,
+      }),
     ]);
     const farms = await farmUseCases.list();
 
@@ -51,6 +61,7 @@ describe('FarmUseCases', () => {
     const createdFarm = await farmUseCases.create({
       name: 'John Doe',
       farmerId: '1',
+      distanceToFactory: 10,
     });
     const output = await farmUseCases.findById(createdFarm.id);
 
@@ -64,6 +75,7 @@ describe('FarmUseCases', () => {
     const createdFarm = await farmUseCases.create({
       name: 'John Doe',
       farmerId: '1',
+      distanceToFactory: 10,
     });
     const deleted = await farmUseCases.delete(createdFarm.id);
 

@@ -3,6 +3,7 @@ import { generateObjectId } from '../../../@common/util';
 export type FarmProps = {
   name: string;
   farmerId: string;
+  distanceToFactory: number;
 };
 
 export class Farm {
@@ -20,6 +21,10 @@ export class Farm {
 
   public get name(): string {
     return this.props.name;
+  }
+
+  public get distanceToFactory(): number {
+    return this.props.distanceToFactory;
   }
 
   toJSON() {

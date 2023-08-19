@@ -66,12 +66,18 @@ describe('MilkProductionUseCases', () => {
         date: new Date('2023-08-19'),
         amount: 10,
       }),
+      milkProductionUseCases.create({
+        farmId: '2',
+        date: new Date('2023-08-19'),
+        amount: 10,
+      }),
     ]);
-    const milkProductions = await milkProductionUseCases.list();
+
+    const milkProductions = await milkProductionUseCases.list('1');
 
     expect(milkProductions).toStrictEqual([MilkProduction1, MilkProduction2]);
     expect(milkProductions).toHaveLength(2);
-    expect(milkProductionRepository.items).toHaveLength(2);
+    expect(milkProductionRepository.items).toHaveLength(3);
   });
 
   it('should find a MilkProduction by id', async () => {
@@ -130,7 +136,7 @@ describe('MilkProductionUseCases', () => {
     expect(milkProductionRepository.items).toHaveLength(1);
   });
 
-  it('should return correct milk production report', async () => {
+  it('should return correct montlly milk production', async () => {
     const milkProductionRepository = new MilkProductionInMemoryRepository();
     const milkProductionUseCases = new MilkProductionUseCases(
       milkProductionRepository,
@@ -154,39 +160,56 @@ describe('MilkProductionUseCases', () => {
       amount: 15,
     });
 
-    const { dailyProduction, averageProduction } =
-      await milkProductionUseCases.monthlyReport('1', 2023, 8);
-
-    expect(averageProduction).toBe(
-      (
-        dailyProduction.reduce((a, b) => a + b.amount, 0) /
-        dailyProduction.length
-      ).toFixed(3),
+    const monthlyProduction = await milkProductionUseCases.monthlyProduction(
+      '1',
+      2023,
+      8,
     );
 
-    expect(dailyProduction[8]).toStrictEqual({
+    expect(monthlyProduction[8]).toStrictEqual({
       amount: 0,
       date: new Date('2023-08-09').toISOString(),
     });
-    expect(dailyProduction[9]).toStrictEqual({
+    expect(monthlyProduction[9]).toStrictEqual({
       amount: 5,
       date: new Date('2023-08-10').toISOString(),
     });
-    expect(dailyProduction[18]).toStrictEqual({
+    expect(monthlyProduction[18]).toStrictEqual({
       amount: 5,
       date: new Date('2023-08-19').toISOString(),
     });
-    expect(dailyProduction[19]).toStrictEqual({
+    expect(monthlyProduction[19]).toStrictEqual({
       amount: 10,
       date: new Date('2023-08-20').toISOString(),
     });
-    expect(dailyProduction[28]).toStrictEqual({
+    expect(monthlyProduction[28]).toStrictEqual({
       amount: 10,
       date: new Date('2023-08-29').toISOString(),
     });
-    expect(dailyProduction[29]).toStrictEqual({
+    expect(monthlyProduction[29]).toStrictEqual({
       amount: 15,
       date: new Date('2023-08-30').toISOString(),
     });
+  });
+
+  it('should return information off all days of the month', async () => {
+    const milkProductionRepository = new MilkProductionInMemoryRepository();
+    const milkProductionUseCases = new MilkProductionUseCases(
+      milkProductionRepository,
+    );
+
+    await milkProductionUseCases.create({
+      farmId: '1',
+      date: new Date('2023-07-31'),
+      amount: 5,
+    });
+
+    const augustMonthlyProduction =
+      await milkProductionUseCases.monthlyProduction('1', 2023, 8);
+    const feburaryMonthlyProduction =
+      await milkProductionUseCases.monthlyProduction('1', 2023, 2);
+
+    expect(augustMonthlyProduction).toHaveLength(31);
+    expect(feburaryMonthlyProduction).toHaveLength(28);
   });
 });
