@@ -52,9 +52,9 @@ describe('BaseInMemoryRepository', () => {
   it('should not found an unexistent item', async () => {
     const repository = new BaseInMemoryRepository<Item>();
 
-    const item = await repository.findById('1');
-
-    expect(item).toBeUndefined();
+    await expect(repository.findById('1')).rejects.toThrowError(
+      'Entity not found',
+    );
   });
 
   it('should delete an item', async () => {

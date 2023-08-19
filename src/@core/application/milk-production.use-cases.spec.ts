@@ -33,6 +33,7 @@ describe('MilkProductionUseCases', () => {
       amount: 1,
     });
     const updatedMilkProduction = await milkProductionUseCases.updateById(
+      '1',
       createdMilkProduction.id,
       {
         farmId: '1',
@@ -92,6 +93,7 @@ describe('MilkProductionUseCases', () => {
       amount: 10,
     });
     const output = await milkProductionUseCases.findById(
+      '1',
       createdMilkProduction.id,
     );
 
@@ -110,6 +112,7 @@ describe('MilkProductionUseCases', () => {
       amount: 10,
     });
     const deleted = await milkProductionUseCases.delete(
+      '1',
       createdMilkProduction.id,
     );
 

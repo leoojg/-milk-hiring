@@ -1,11 +1,16 @@
-import { Farm } from '../domain/farm/farm.entity';
-import { BaseInMemoryRepository } from '../infra/db/in-memory/base.repository';
+import { FarmInMemoryRepository } from '../infra/db/in-memory/farm.repository';
 import { FarmUseCases } from './farm.use-cases';
 
+let farmRepository: FarmInMemoryRepository;
+let farmUseCases: FarmUseCases;
+
+// TODO: add tests to ensure that only the farmer can access his farms
 describe('FarmUseCases', () => {
+  beforeEach(() => {
+    farmRepository = new FarmInMemoryRepository();
+    farmUseCases = new FarmUseCases(farmRepository);
+  });
   it('should create a farm', async () => {
-    const farmRepository = new BaseInMemoryRepository<Farm>();
-    const farmUseCases = new FarmUseCases(farmRepository);
     const output = await farmUseCases.create({
       name: 'John Doe',
       farmerId: '1',
@@ -17,14 +22,12 @@ describe('FarmUseCases', () => {
   });
 
   it('should update a farm', async () => {
-    const farmRepository = new BaseInMemoryRepository<Farm>();
-    const farmUseCases = new FarmUseCases(farmRepository);
     const createdFarm = await farmUseCases.create({
       name: 'John Doe',
       farmerId: '1',
       distanceToFactory: 10,
     });
-    const updatedFarm = await farmUseCases.updateById(createdFarm.id, {
+    const updatedFarm = await farmUseCases.updateById('1', createdFarm.id, {
       name: 'John Doe 2',
     });
 
@@ -33,8 +36,6 @@ describe('FarmUseCases', () => {
   });
 
   it('should list all farms', async () => {
-    const farmRepository = new BaseInMemoryRepository<Farm>();
-    const farmUseCases = new FarmUseCases(farmRepository);
     const [farm1, farm2] = await Promise.all([
       farmUseCases.create({
         name: 'John Doe',
@@ -47,7 +48,7 @@ describe('FarmUseCases', () => {
         distanceToFactory: 10,
       }),
     ]);
-    const farms = await farmUseCases.list();
+    const farms = await farmUseCases.list('1');
 
     expect(farms).toStrictEqual([farm1, farm2]);
     expect(farms).toHaveLength(2);
@@ -55,29 +56,23 @@ describe('FarmUseCases', () => {
   });
 
   it('should find a farm by id', async () => {
-    const farmRepository = new BaseInMemoryRepository<Farm>();
-    const farmUseCases = new FarmUseCases(farmRepository);
-
     const createdFarm = await farmUseCases.create({
       name: 'John Doe',
       farmerId: '1',
       distanceToFactory: 10,
     });
-    const output = await farmUseCases.findById(createdFarm.id);
+    const output = await farmUseCases.findById('1', createdFarm.id);
 
     expect(output).toStrictEqual(createdFarm);
   });
 
   it('should delete a farm', async () => {
-    const farmRepository = new BaseInMemoryRepository<Farm>();
-    const farmUseCases = new FarmUseCases(farmRepository);
-
     const createdFarm = await farmUseCases.create({
       name: 'John Doe',
       farmerId: '1',
       distanceToFactory: 10,
     });
-    const deleted = await farmUseCases.delete(createdFarm.id);
+    const deleted = await farmUseCases.delete('1', createdFarm.id);
 
     expect(deleted).toStrictEqual(createdFarm);
     expect(farmRepository.items).toHaveLength(0);

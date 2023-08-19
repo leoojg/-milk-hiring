@@ -30,10 +30,11 @@ export class MilkProductionUseCases {
   }
 
   async updateById(
+    farmId: string,
     id: string,
     milkProductionProps: Partial<MilkProductionProps>,
   ) {
-    const milkProduction = await this.findById(id);
+    const milkProduction = await this.findById(farmId, id);
     const output = await this.milkProductionRepository.updateById(
       id,
       new MilkProduction({ ...milkProduction, ...milkProductionProps }),
@@ -48,12 +49,13 @@ export class MilkProductionUseCases {
     return MilkProductions.map((MilkProduction) => MilkProduction.toJSON());
   }
 
-  async findById(id: string) {
+  async findById(farmId: string, id: string) {
     const MilkProduction = await this.milkProductionRepository.findById(id);
     return MilkProduction.toJSON();
   }
 
-  async delete(id: string) {
+  async delete(farmId: string, id: string) {
+    await this.findById(farmId, id);
     return (await this.milkProductionRepository.deleteById(id)).toJSON();
   }
 

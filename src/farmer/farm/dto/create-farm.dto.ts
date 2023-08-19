@@ -3,15 +3,11 @@ import { IsNumber, IsString, MinLength } from 'class-validator';
 import { FarmProps } from 'src/@core/domain/farm/farm.entity';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class CreateFarmDto implements FarmProps {
+export class CreateFarmDto implements Omit<FarmProps, 'farmerId'> {
   @ApiProperty()
   @IsString()
   @MinLength(3)
   name: string;
-
-  @ApiProperty()
-  @IsString()
-  farmerId: string;
 
   @ApiProperty()
   @Type(() => Number)

@@ -12,11 +12,6 @@ export class UpdateFarmDto implements CreateFarmDto {
 
   @ApiPropertyOptional()
   @IsOptional()
-  @IsString()
-  farmerId: string;
-
-  @ApiPropertyOptional()
-  @IsOptional()
   @Type(() => Number)
   @IsNumber()
   distanceToFactory: number;
