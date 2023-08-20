@@ -2,7 +2,9 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { MilkProductionProps } from 'src/@core/domain/milk-production/milk-production.entity';
 import * as mongoose from 'mongoose';
 
-@Schema()
+@Schema({
+  collection: 'milk-production',
+})
 export class MilkProductionEntity implements MilkProductionProps {
   @Prop({ required: true })
   date: Date;

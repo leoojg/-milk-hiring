@@ -2,7 +2,9 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { FarmProps } from 'src/@core/domain/farm/farm.entity';
 import * as mongoose from 'mongoose';
 
-@Schema()
+@Schema({
+  collection: 'farms',
+})
 export class FarmEntity implements FarmProps {
   @Prop({ required: true })
   name: string;
