@@ -104,7 +104,7 @@ export class MilkProductionUseCases {
 
     return {
       monthlyProduction,
-      averageProduction: averageProduction.toFixed(3),
+      averageProduction: averageProduction.toFixed(3) + 'L',
     };
   }
 }

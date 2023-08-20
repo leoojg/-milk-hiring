@@ -21,6 +21,8 @@ import {
   MilkProductionEntity,
   MilkProductionSchema,
 } from 'src/schemas/milk-production.entity';
+import { PriceEvaluationUseCases } from '../@core/application/price-evaluation-use-cases';
+import { PriceEvaluation } from '../@core/domain/price-evaluation/price-evaluation.entity';
 
 @Module({
   imports: [
@@ -56,6 +58,19 @@ import {
         milkProductionRepository: MilkProductionRepositoryInterface,
       ) => new MilkProductionUseCases(milkProductionRepository),
       inject: [MilkProductionMongooseRepository],
+    },
+    {
+      provide: PriceEvaluationUseCases,
+      useFactory: (
+        farmRepository: FarmRepositoryInterface,
+        milkProductionUseCases: MilkProductionUseCases,
+      ) =>
+        new PriceEvaluationUseCases(
+          farmRepository,
+          milkProductionUseCases,
+          PriceEvaluation,
+        ),
+      inject: [FarmMongooseRepository, MilkProductionUseCases],
     },
   ],
 })

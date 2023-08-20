@@ -9,7 +9,7 @@ export class PriceEvaluationUseCases {
     private readonly priceEvaluation: typeof PriceEvaluationInterface,
   ) {}
 
-  async monthlyPrice(farmId: string, year: number, month: number) {
+  async monthlyReport(farmId: string, year: number, month: number) {
     const farm = await this.farmRepository.findById(farmId);
 
     const monthlyProduction =
@@ -35,21 +35,31 @@ export class PriceEvaluationUseCases {
         ? evaluation.productionBonus
         : 0;
 
-    const totalAmount =
+    const totalEarningAmount =
       monthlyProductionAmount * evaluation.basePrice -
-      kilometerPrice * farm.distanceToFactory +
+      (monthlyProductionAmount !== 0
+        ? kilometerPrice * farm.distanceToFactory
+        : 0) +
       productionBonus * monthlyProductionAmount;
 
-    return { farmId, totalAmount, year, month };
+    return {
+      monthProduction: monthlyProductionAmount.toFixed(3) + ' L',
+      earnings: totalEarningAmount.toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL',
+      }),
+      year,
+      month,
+    };
   }
 
   async yearlyReport(farmId: string, year: number) {
-    const monthlyPricePromises = Array.from({ length: 12 }).map((_, index) =>
-      this.monthlyPrice(farmId, year, index + 1),
+    const monthlyReportPromises = Array.from({ length: 12 }).map((_, index) =>
+      this.monthlyReport(farmId, year, index + 1),
     );
 
-    const monthlyPrices = await Promise.all(monthlyPricePromises);
+    const monthlyReports = await Promise.all(monthlyReportPromises);
 
-    return monthlyPrices;
+    return monthlyReports;
   }
 }

@@ -71,14 +71,17 @@ describe('ListPricingUseCases', () => {
       }),
     ]);
 
-    const evaluation = await priceEvaluationUseCases.monthlyPrice(
+    const evaluation = await priceEvaluationUseCases.monthlyReport(
       farmId,
       2023,
       8,
     );
 
-    expect(evaluation.totalAmount).toEqual(
-      80 * PriceEvaluation.secondSemester.basePrice,
+    expect(evaluation.earnings).toEqual(
+      (80 * PriceEvaluation.secondSemester.basePrice).toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL',
+      }),
     );
   });
 
@@ -109,15 +112,20 @@ describe('ListPricingUseCases', () => {
       }),
     ]);
 
-    const evaluation = await priceEvaluationUseCases.monthlyPrice(
+    const evaluation = await priceEvaluationUseCases.monthlyReport(
       farmId,
       2023,
       8,
     );
 
-    expect(evaluation.totalAmount).toEqual(
-      (10 * 30 + 50) * PriceEvaluation.secondSemester.basePrice +
-        (10 * 30 + 50) * PriceEvaluation.secondSemester.productionBonus,
+    expect(evaluation.earnings).toEqual(
+      (
+        (10 * 30 + 50) * PriceEvaluation.secondSemester.basePrice +
+        (10 * 30 + 50) * PriceEvaluation.secondSemester.productionBonus
+      ).toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL',
+      }),
     );
   });
 
@@ -149,15 +157,20 @@ describe('ListPricingUseCases', () => {
       }),
     ]);
 
-    const evaluation = await priceEvaluationUseCases.monthlyPrice(
+    const evaluation = await priceEvaluationUseCases.monthlyReport(
       farmId,
       2023,
       5,
     );
 
-    expect(evaluation.totalAmount).toEqual(
-      80 * PriceEvaluation.secondSemester.basePrice -
-        distanceToFactory * PriceEvaluation.firstSemester.costPerKilometer,
+    expect(evaluation.earnings).toEqual(
+      (
+        80 * PriceEvaluation.secondSemester.basePrice -
+        distanceToFactory * PriceEvaluation.firstSemester.costPerKilometer
+      ).toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL',
+      }),
     );
   });
 
@@ -189,17 +202,22 @@ describe('ListPricingUseCases', () => {
       }),
     ]);
 
-    const evaluation = await priceEvaluationUseCases.monthlyPrice(
+    const evaluation = await priceEvaluationUseCases.monthlyReport(
       farmId,
       2023,
       5,
     );
 
-    expect(evaluation.totalAmount).toEqual(
-      80 * PriceEvaluation.secondSemester.basePrice -
+    expect(evaluation.earnings).toEqual(
+      (
+        80 * PriceEvaluation.secondSemester.basePrice -
         distanceToFactory *
           (PriceEvaluation.firstSemester.costPerKilometer +
-            PriceEvaluation.firstSemester.costPerKilometerAbove),
+            PriceEvaluation.firstSemester.costPerKilometerAbove)
+      ).toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL',
+      }),
     );
   });
 
