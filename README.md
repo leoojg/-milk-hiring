@@ -14,7 +14,7 @@ Para garantir que tudo funcionou corretamente execute o comando
 docker ps
 ```
 
-Se ocorreu tudo certo devem existir os containers `node-milk-hiring` e `mongodb-milk-hiring`. Com o projeto rodando a documentação da API pode ser encontrada [aqui](http://localhost:3000/api#/).
+Se ocorreu tudo certo devem existir os containers `node-milk-hiring` e `mongodb-milk-hiring`. Com o projeto rodando a documentação da API pode ser encontrada em [http://localhost:3000/api](http://localhost:3000/api).
 
 ## Cenário do problema solucionado
 
