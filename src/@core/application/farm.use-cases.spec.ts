@@ -87,4 +87,54 @@ describe('FarmUseCases', () => {
     expect(deleted).toStrictEqual(createdFarm);
     expect(farmRepository.items).toHaveLength(0);
   });
+
+  it('should only return farms from actual farmer', async () => {
+    const farmerId = generateObjectId();
+    const anotherFarmer = generateObjectId();
+
+    await Promise.all([
+      await farmUseCases.create({
+        name: 'John Doe',
+        farmerId,
+        distanceToFactory: 10,
+      }),
+      await farmUseCases.create({
+        name: 'John Doe 2',
+        farmerId,
+        distanceToFactory: 10,
+      }),
+      await farmUseCases.create({
+        name: 'John Doe 3',
+        farmerId: anotherFarmer,
+        distanceToFactory: 10,
+      }),
+    ]);
+
+    const output = await farmUseCases.list(farmerId);
+
+    expect(output).toHaveLength(2);
+    expect(farmRepository.items).toHaveLength(3);
+  });
+
+  it('should not return farms from other farmers', async () => {
+    const farmerId = generateObjectId();
+
+    await Promise.all([
+      await farmUseCases.create({
+        name: 'John Doe',
+        farmerId,
+        distanceToFactory: 10,
+      }),
+      await farmUseCases.create({
+        name: 'John Doe 2',
+        farmerId,
+        distanceToFactory: 10,
+      }),
+    ]);
+
+    const output = await farmUseCases.list(generateObjectId());
+
+    expect(output).toHaveLength(0);
+    expect(farmRepository.items).toHaveLength(2);
+  });
 });
