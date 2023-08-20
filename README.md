@@ -1,4 +1,22 @@
-## Cenário do problema a ser solucionado
+## Rodando o projeto
+
+### Requisitos:
+- Docker
+- Docker-compose
+
+Para executar o projeto basta rodar o comando no terminal
+```zsh 
+$ docker-compose up -d
+```
+
+Para garantir que tudo funcionou corretamente execute o comando
+```zsh
+$ docker ps
+```
+
+Se ocorreu tudo certo devem existir os containers `node-milk-hiring` e `mongodb-milk-hiring`. Com o projeto rodando a documentação da API pode ser encontrada [aqui](http://localhost:3000/api#/).
+
+## Cenário do problema solucionado
 
 Considere o cenário onde há N fazendeiros que produzem leite e entregam sua produção para uma fábrica de processamento.
 
