@@ -52,7 +52,7 @@ export class MilkProductionMongooseRepository
     return (
       await this.milkProductionModel
         .find({ farmId, date: { $gte: startDate, $lte: endDate } })
-        .sort({ date: 1 })
+        .sort({ date: -1 })
         .lean()
     ).map((milkProduction) =>
       MilkProduction.create(
@@ -68,7 +68,7 @@ export class MilkProductionMongooseRepository
   ): Promise<number> {
     const [lastProduction] = await this.milkProductionModel
       .find({ farmId, date: { $lte: date } })
-      .sort({ date: 1 })
+      .sort({ date: -1 })
       .lean();
 
     return lastProduction?.amount || 0;
