@@ -13,6 +13,5 @@ export class CreateMilkProductionDto
 
   @ApiProperty()
   @IsISO8601()
-  @Type(() => Date)
   date: Date;
 }

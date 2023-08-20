@@ -1,3 +1,4 @@
+import { TEntity } from 'src/@common/base.repository';
 import { generateObjectId } from '../../../@common/util';
 
 export type FarmProps = {
@@ -6,9 +7,13 @@ export type FarmProps = {
   distanceToFactory: number;
 };
 
-export class Farm {
+export class Farm implements TEntity {
   public readonly id: string;
   private props: FarmProps;
+
+  static create(entity: Record<string, unknown>, id?: string): Farm {
+    return new Farm(entity as FarmProps, id);
+  }
 
   constructor(props: FarmProps, id?: string) {
     this.id = id || generateObjectId();

@@ -21,6 +21,7 @@ export class MilkProductionUseCases {
     );
 
     if (conflict) {
+      // TODO: fix 500 status code when conflict
       throw new Error('Cannot insert milk production for the same day twice');
     }
 
@@ -44,14 +45,14 @@ export class MilkProductionUseCases {
   }
 
   async list(farmId: string) {
-    const MilkProductions =
+    const milkProductions =
       await this.milkProductionRepository.listByFarmId(farmId);
-    return MilkProductions.map((MilkProduction) => MilkProduction.toJSON());
+    return milkProductions.map((milkProduction) => milkProduction.toJSON());
   }
 
   async findById(farmId: string, id: string) {
-    const MilkProduction = await this.milkProductionRepository.findById(id);
-    return MilkProduction.toJSON();
+    const milkProduction = await this.milkProductionRepository.findById(id);
+    return milkProduction.toJSON();
   }
 
   async delete(farmId: string, id: string) {

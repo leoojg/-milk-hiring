@@ -7,5 +7,8 @@ export interface BaseRepositoryInterface<T> {
 }
 
 export abstract class TEntity {
+  static create(entity: Record<string, unknown>, id?: string): TEntity {
+    return new (this as any)(entity, id);
+  }
   abstract toJSON(): Record<string, unknown>;
 }

@@ -1,3 +1,4 @@
+import { TEntity } from 'src/@common/base.repository';
 import { generateObjectId } from '../../../@common/util';
 
 export type MilkProductionProps = {
@@ -6,13 +7,17 @@ export type MilkProductionProps = {
   amount: number;
 };
 
-export class MilkProduction {
+export class MilkProduction implements TEntity {
   public readonly id: string;
   private props: MilkProductionProps;
 
   constructor(props: MilkProductionProps, id?: string) {
     this.id = id || generateObjectId();
     this.props = props;
+  }
+
+  static create(entity: Record<string, unknown>, id?: string): MilkProduction {
+    return new MilkProduction(entity as MilkProductionProps, id);
   }
 
   public get farmId(): string {

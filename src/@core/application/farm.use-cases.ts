@@ -1,5 +1,6 @@
 import { FarmRepositoryInterface } from '../domain/farm/farm.repository';
 import { Farm, FarmProps } from '../domain/farm/farm.entity';
+import { equalObjectId } from '../../@common/util';
 
 export class FarmUseCases {
   constructor(private readonly farmRepository: FarmRepositoryInterface) {}
@@ -31,8 +32,9 @@ export class FarmUseCases {
 
   async findById(farmerId: string, id: string) {
     const farm = await this.farmRepository.findById(id);
-    if (farm.farmerId !== farmerId) {
+    if (!equalObjectId(farm.farmerId, farmerId)) {
       throw new Error('Forbidden');
+      // TODO: add handle to this kind of error in nestjs
     }
     return farm.toJSON();
   }

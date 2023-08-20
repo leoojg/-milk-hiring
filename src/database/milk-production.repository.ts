@@ -4,6 +4,8 @@ import { MilkProductionRepositoryInterface } from 'src/@core/domain/milk-product
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { MilkProductionEntity } from 'src/schemas/milk-production.entity';
+import { TEntity } from 'src/@common/base.repository';
+import { generateObjectId } from 'src/@common/util';
 
 export class MilkProductionMongooseRepository
   extends BaseMongooseRepository<MilkProduction>
@@ -13,18 +15,30 @@ export class MilkProductionMongooseRepository
     @InjectModel(MilkProductionEntity.name)
     private milkProductionModel: Model<MilkProduction>,
   ) {
-    super(milkProductionModel);
+    super(milkProductionModel, MilkProduction as unknown as typeof TEntity);
   }
 
   async listByFarmId(farmId: string): Promise<MilkProduction[]> {
-    return this.milkProductionModel.find({ farmId }).lean();
+    return (await this.milkProductionModel.find({ farmId }).lean()).map(
+      (milkProduction) =>
+        MilkProduction.create(
+          this.removeMongoInternalFields(milkProduction),
+          generateObjectId(milkProduction._id),
+        ),
+    );
   }
 
   async findByFarmIdAndDate(
     farmId: string,
     date: Date,
   ): Promise<MilkProduction | null> {
-    return this.milkProductionModel.find({ farmId, date }).lean();
+    const entity = await this.milkProductionModel
+      .findOne({ farmId, date })
+      .lean();
+    return MilkProduction.create(
+      this.removeMongoInternalFields(entity),
+      generateObjectId(entity._id),
+    );
   }
 
   async findByFarmIdAndPeriod(
@@ -32,10 +46,17 @@ export class MilkProductionMongooseRepository
     startDate: Date,
     endDate: Date,
   ): Promise<MilkProduction[]> {
-    return this.milkProductionModel
-      .find({ farmId, date: { $gte: startDate, $lte: endDate } })
-      .sort({ date: 1 })
-      .lean();
+    return (
+      await this.milkProductionModel
+        .find({ farmId, date: { $gte: startDate, $lte: endDate } })
+        .sort({ date: 1 })
+        .lean()
+    ).map((milkProduction) =>
+      MilkProduction.create(
+        this.removeMongoInternalFields(milkProduction),
+        generateObjectId(milkProduction._id),
+      ),
+    );
   }
 
   async findProductionAmountByFarmIdAndDate(
