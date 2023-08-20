@@ -1,9 +1,10 @@
 import { Farm } from '../domain/farm/farm.entity';
-import { BaseInMemoryRepository } from '../infra/db/in-memory/base.repository';
 import { MilkProductionInMemoryRepository } from '../infra/db/in-memory/milk-production.repository';
 import { MilkProductionUseCases } from './milk-production.use-cases';
 import { PriceEvaluationUseCases } from './price-evaluation-use-cases';
 import { PriceEvaluationInterface } from '../domain/price-evaluation/price-evaluation.entity';
+import { FarmInMemoryRepository } from '../infra/db/in-memory/farm.repository';
+import { generateObjectId } from '../../@common/util';
 
 class PriceEvaluation implements PriceEvaluationInterface {
   static firstSemester = {
@@ -24,14 +25,14 @@ class PriceEvaluation implements PriceEvaluationInterface {
   };
 }
 
-let farmRepository: BaseInMemoryRepository<Farm>;
+let farmRepository: FarmInMemoryRepository;
 let milkProductionRepository: MilkProductionInMemoryRepository;
 let milkProductionUseCases: MilkProductionUseCases;
 let priceEvaluationUseCases: PriceEvaluationUseCases;
 
 describe('ListPricingUseCases', () => {
   beforeEach(async () => {
-    farmRepository = new BaseInMemoryRepository<Farm>();
+    farmRepository = new FarmInMemoryRepository();
     milkProductionRepository = new MilkProductionInMemoryRepository();
     milkProductionUseCases = new MilkProductionUseCases(
       milkProductionRepository,
@@ -44,32 +45,34 @@ describe('ListPricingUseCases', () => {
   });
 
   it('should compute production of the month', async () => {
+    const farmerId = generateObjectId();
+    const farmId = generateObjectId();
     await farmRepository.create(
       new Farm(
         {
           name: 'John Doe',
           distanceToFactory: 10,
-          farmerId: 'fake-farmer-id',
+          farmerId,
         },
-        'fake-farm-id',
+        farmId,
       ),
     );
 
     await Promise.all([
       milkProductionUseCases.create({
         amount: 1,
-        farmId: 'fake-farm-id',
+        farmId,
         date: new Date('2023-07-05'),
       }),
       milkProductionUseCases.create({
         amount: 50,
-        farmId: 'fake-farm-id',
+        farmId,
         date: new Date('2023-08-31'),
       }),
     ]);
 
     const evaluation = await priceEvaluationUseCases.monthlyPrice(
-      'fake-farm-id',
+      farmId,
       2023,
       8,
     );
@@ -80,32 +83,34 @@ describe('ListPricingUseCases', () => {
   });
 
   it('should compute production of the month with the bonus production', async () => {
+    const farmerId = generateObjectId();
+    const farmId = generateObjectId();
     await farmRepository.create(
       new Farm(
         {
           name: 'John Doe',
           distanceToFactory: 10,
-          farmerId: 'fake-farmer-id',
+          farmerId,
         },
-        'fake-farm-id',
+        farmId,
       ),
     );
 
     await Promise.all([
       milkProductionUseCases.create({
         amount: 10,
-        farmId: 'fake-farm-id',
+        farmId,
         date: new Date('2023-07-05'),
       }),
       milkProductionUseCases.create({
         amount: 50,
-        farmId: 'fake-farm-id',
+        farmId,
         date: new Date('2023-08-31'),
       }),
     ]);
 
     const evaluation = await priceEvaluationUseCases.monthlyPrice(
-      'fake-farm-id',
+      farmId,
       2023,
       8,
     );
@@ -117,33 +122,35 @@ describe('ListPricingUseCases', () => {
   });
 
   it('should compute production of the month with the distance to the factory', async () => {
+    const farmerId = generateObjectId();
+    const farmId = generateObjectId();
     const distanceToFactory = 5;
     await farmRepository.create(
       new Farm(
         {
           name: 'John Doe',
           distanceToFactory,
-          farmerId: 'fake-farmer-id',
+          farmerId,
         },
-        'fake-farm-id',
+        farmId,
       ),
     );
 
     await Promise.all([
       milkProductionUseCases.create({
         amount: 1,
-        farmId: 'fake-farm-id',
+        farmId,
         date: new Date('2023-04-05'),
       }),
       milkProductionUseCases.create({
         amount: 50,
-        farmId: 'fake-farm-id',
+        farmId,
         date: new Date('2023-05-31'),
       }),
     ]);
 
     const evaluation = await priceEvaluationUseCases.monthlyPrice(
-      'fake-farm-id',
+      farmId,
       2023,
       5,
     );
@@ -155,33 +162,35 @@ describe('ListPricingUseCases', () => {
   });
 
   it('should compute production of the month with high distance to the factory', async () => {
+    const farmerId = generateObjectId();
+    const farmId = generateObjectId();
     const distanceToFactory = 10;
     await farmRepository.create(
       new Farm(
         {
           name: 'John Doe',
           distanceToFactory,
-          farmerId: 'fake-farmer-id',
+          farmerId,
         },
-        'fake-farm-id',
+        farmId,
       ),
     );
 
     await Promise.all([
       milkProductionUseCases.create({
         amount: 1,
-        farmId: 'fake-farm-id',
+        farmId,
         date: new Date('2023-04-05'),
       }),
       milkProductionUseCases.create({
         amount: 50,
-        farmId: 'fake-farm-id',
+        farmId,
         date: new Date('2023-05-31'),
       }),
     ]);
 
     const evaluation = await priceEvaluationUseCases.monthlyPrice(
-      'fake-farm-id',
+      farmId,
       2023,
       5,
     );
@@ -195,39 +204,38 @@ describe('ListPricingUseCases', () => {
   });
 
   it('should compute production of all the year', async () => {
+    const farmerId = generateObjectId();
+    const farmId = generateObjectId();
     await farmRepository.create(
       new Farm(
         {
           name: 'John Doe',
           distanceToFactory: 5,
-          farmerId: 'fake-farmer-id',
+          farmerId,
         },
-        'fake-farm-id',
+        farmId,
       ),
     );
 
     await Promise.all([
       milkProductionUseCases.create({
         amount: 5,
-        farmId: 'fake-farm-id',
+        farmId,
         date: new Date('2022-12-30'),
       }),
       milkProductionUseCases.create({
         amount: 10,
-        farmId: 'fake-farm-id',
+        farmId,
         date: new Date('2023-06-30'),
       }),
       milkProductionUseCases.create({
         amount: 0,
-        farmId: 'fake-farm-id',
+        farmId,
         date: new Date('2023-08-30'),
       }),
     ]);
 
-    const evaluation = await priceEvaluationUseCases.yearlyReport(
-      'fake-farm-id',
-      2023,
-    );
+    const evaluation = await priceEvaluationUseCases.yearlyReport(farmId, 2023);
 
     expect(evaluation).toHaveLength(12);
   });
