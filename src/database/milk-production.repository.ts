@@ -35,6 +35,9 @@ export class MilkProductionMongooseRepository
     const entity = await this.milkProductionModel
       .findOne({ farmId, date })
       .lean();
+
+    if (!entity) return null;
+
     return MilkProduction.create(
       this.removeMongoInternalFields(entity),
       generateObjectId(entity._id),

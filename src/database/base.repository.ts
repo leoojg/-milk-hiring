@@ -15,7 +15,7 @@ export class BaseMongooseRepository<T extends TEntity>
     entity: Record<string, unknown>,
   ): Record<string, unknown> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { __v, _id, ...rest } = entity;
+    const { __v, _id, ...rest } = entity ?? {};
     return rest;
   }
 

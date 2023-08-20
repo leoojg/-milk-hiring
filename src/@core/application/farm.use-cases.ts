@@ -34,7 +34,6 @@ export class FarmUseCases {
     const farm = await this.farmRepository.findById(id);
     if (!equalObjectId(farm.farmerId, farmerId)) {
       throw new Error('Forbidden');
-      // TODO: add handle to this kind of error in nestjs
     }
     return farm.toJSON();
   }

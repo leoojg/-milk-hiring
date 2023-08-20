@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { FarmerModule } from './farmer/farmer.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { APP_FILTER } from '@nestjs/core';
+import { CustomExceptionFilter } from './custom-exception.filter';
 
 @Module({
   imports: [
@@ -20,7 +22,11 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     }),
     FarmerModule,
   ],
-  controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_FILTER,
+      useClass: CustomExceptionFilter,
+    },
+  ],
 })
 export class AppModule {}

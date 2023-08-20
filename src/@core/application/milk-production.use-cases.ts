@@ -21,7 +21,6 @@ export class MilkProductionUseCases {
     );
 
     if (conflict) {
-      // TODO: fix 500 status code when conflict
       throw new Error('Cannot insert milk production for the same day twice');
     }
 
